@@ -4,14 +4,19 @@ import Link from 'next/link';
 import { ArrowLeft, FileText } from 'lucide-react';
 import React from 'react';
 
+type Props = {
+  params: Promise<{ slug: string }>;
+};
+
 export async function generateStaticParams() {
   return products.map((product) => ({
     slug: product.slug,
   }));
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
-  const product = getProductBySlug(params.slug);
+export async function generateMetadata({ params }: Props) {
+  const { slug } = await params;
+  const product = getProductBySlug(slug);
   if (!product) return { title: 'Not Found' };
   
   return {
@@ -20,8 +25,9 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   };
 }
 
-export default function TermsOfServicePage({ params }: { params: { slug: string } }) {
-  const product = getProductBySlug(params.slug);
+export default async function TermsOfServicePage({ params }: Props) {
+  const { slug } = await params;
+  const product = getProductBySlug(slug);
 
   if (!product) {
     notFound();
